@@ -1,26 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useOnScrollFetch from "../utils/hooks/useOnScrollFetch";
 import { Image } from "@chakra-ui/image";
 import { Link } from "react-router-dom";
-
-async function getPokemon({ limit, offset }) {
-  const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/`, {
-    params: {
-      limit,
-      offset,
-    },
-  });
-
-  return response.data.results;
-}
-
-async function fetchPokemonData(pokemon) {
-  const response = await axios.get(pokemon.url);
-
-  return response.data;
-}
+import { fetchPokemonData, getPokemon } from "../utils/service/api";
 
 export default function Home() {
   const [page, setPage] = useState(1);
@@ -35,7 +18,7 @@ export default function Home() {
   const getEachData = useCallback(async () => {
     if (data) {
       const response = await Promise.all(
-        data.map((pokemon) => fetchPokemonData(pokemon))
+        data.map((pokemon) => fetchPokemonData(pokemon?.url))
       );
 
       setInitialData((prev) => [...prev, ...response]);

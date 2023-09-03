@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/favorite" element={<Favorite />} />
-        <Route path="/:pokemonId" element={<Detail />} />
+        <Route path="/detail/:pokemonId" element={<Detail />} />
       </Routes>
     </Sidebar>
   );

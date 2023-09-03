@@ -3,11 +3,12 @@ import { Icon } from "@chakra-ui/icon";
 import { Flex } from "@chakra-ui/layout";
 import PropTypes from "prop-types";
 
-const NavItem = ({ icon, children }) => {
+const NavItem = ({ icon, children, onClick }) => {
   const color = useColorModeValue("gray.600", "gray.300");
 
   return (
     <Flex
+      onClick={onClick}
       align="center"
       px="4"
       py="3"
@@ -39,10 +40,12 @@ const NavItem = ({ icon, children }) => {
 NavItem.propTypes = {
   icon: PropTypes.elementType,
   children: PropTypes.node.isRequired,
+  onClick: PropTypes.func,
 };
 
 NavItem.defaultProps = {
   icon: null,
+  onClick: () => {},
 };
 
 export default NavItem;
