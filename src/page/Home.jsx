@@ -5,7 +5,7 @@ import { Image } from "@chakra-ui/image";
 import { Link } from "react-router-dom";
 import { fetchPokemonData, getPokemon } from "../utils/service/api";
 import URL_IMAGE from "../utils/helpers/urlImage";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, Spinner } from "@chakra-ui/react";
 import { AiOutlineHeart } from "react-icons/ai";
 
 export default function Home() {
@@ -75,6 +75,17 @@ export default function Home() {
           </div>
         ))}
       </div>
+      {isLoading && (
+        <div className="flex justify-center mt-5">
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+        </div>
+      )}
     </main>
   );
 }
