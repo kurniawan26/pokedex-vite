@@ -18,7 +18,7 @@ const SidebarContent = ({ ...props }) => {
       left="0"
       zIndex="sticky"
       h="full"
-      // pb="10"
+      pb="10"
       overflowX="hidden"
       overflowY="auto"
       bg={useColorModeValue("white", "gray.800")}

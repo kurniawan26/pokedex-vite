@@ -9,9 +9,16 @@ import { Tag } from "@chakra-ui/tag";
 import { Progress } from "@chakra-ui/progress";
 
 import { motion } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { saveFavoriteThunk } from "../redux/Favorite/action";
 
 export default function Detail() {
   const { pokemonId } = useParams();
+  const dispatch = useDispatch();
+
+  const selector = useSelector((state) => state);
+
+  console.log(selector);
 
   const { data } = useQuery({
     queryKey: ["pokemon-detail", pokemonId],
@@ -56,7 +63,25 @@ export default function Detail() {
     >
       <div className="flex justify-between w-full">
         <h1 className="text-3xl font-bold capitalize">{data?.name}</h1>
-        <IconButton aria-label="Favorite" icon={<AiOutlineHeart size={24} />} />
+        <IconButton
+          aria-label="Favorite"
+          icon={
+            <AiOutlineHeart
+              size={24}
+              onClick={() =>
+                dispatch(
+                  saveFavoriteThunk({
+                    id: data?.id,
+                    name: data?.name,
+                    weight: data?.weight,
+                    height: data?.height,
+                    types: data?.types,
+                  })
+                )
+              }
+            />
+          }
+        />
       </div>
       <div className="flex gap-4 h-44 w-44">
         <Image

@@ -4,6 +4,9 @@ import useOnScrollFetch from "../utils/hooks/useOnScrollFetch";
 import { Image } from "@chakra-ui/image";
 import { Link } from "react-router-dom";
 import { fetchPokemonData, getPokemon } from "../utils/service/api";
+import URL_IMAGE from "../utils/helpers/urlImage";
+import { IconButton } from "@chakra-ui/react";
+import { AiOutlineHeart } from "react-icons/ai";
 
 export default function Home() {
   const [page, setPage] = useState(1);
@@ -13,6 +16,7 @@ export default function Home() {
   const { data, isLoading } = useQuery({
     queryKey: ["pokemon", page],
     queryFn: () => getPokemon({ offset: 20 * (page - 1), limit: 20 }),
+    cacheTime: false,
   });
 
   const getEachData = useCallback(async () => {
@@ -27,7 +31,7 @@ export default function Home() {
 
   useEffect(() => {
     getEachData();
-  }, [getEachData]);
+  }, [getEachData, page]);
 
   useOnScrollFetch(cardContainerRef, data, isLoading, setPage);
 
@@ -42,7 +46,7 @@ export default function Home() {
         {initialData?.map((pokemon) => (
           <div key={pokemon.id} className="p-5 bg-white rounded-lg shadow-lg">
             <Image
-              src={pokemon.sprites.front_default}
+              src={URL_IMAGE(pokemon.id)}
               alt={pokemon.name}
               className="w-32 h-32 m-auto"
             />
@@ -53,14 +57,20 @@ export default function Home() {
               </h1>
             </Link>
             <div className="flex justify-between mt-5">
-              <div className="flex flex-col">
-                <span className="text-sm font-bold">Weight</span>
-                <span className="text-sm">{pokemon.weight}</span>
+              <div className="flex gap-4">
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold">Weight</span>
+                  <span className="text-sm">{pokemon.weight}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm font-bold">Height</span>
+                  <span className="text-sm">{pokemon.height}</span>
+                </div>
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold">Height</span>
-                <span className="text-sm">{pokemon.height}</span>
-              </div>
+              <IconButton
+                aria-label="Favorite"
+                icon={<AiOutlineHeart size={24} />}
+              />
             </div>
           </div>
         ))}
