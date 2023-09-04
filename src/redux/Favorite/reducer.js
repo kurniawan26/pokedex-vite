@@ -9,9 +9,9 @@ function favoriteReducer(state = [], action) {
     case ActionTypes.CLEAR_FAVORITE:
       return action.payload;
     case ActionTypes.GET_FAVORITE:
-      return action.payload;
+      return action.payload || [];
     default:
-      return state;
+      return null;
   }
 }
 

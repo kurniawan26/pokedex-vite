@@ -12,7 +12,7 @@ import useGetTagColor from "../../utils/hooks/useGetTagColor";
 import PropTypes from "prop-types";
 
 export default function Pokecard({ pokemon }) {
-  const { favorites } = useSelector((state) => state);
+  const favorites = useSelector((state) => state.favorites);
 
   const isFavorite = favorites?.find(
     (favorite) => favorite.id === +pokemon?.id
@@ -38,7 +38,7 @@ export default function Pokecard({ pokemon }) {
         <div className="flex items-center justify-center gap-2">
           {pokemon?.types.map((type) => (
             <Tag
-              key={type?.name}
+              key={type.type.name}
               size="sm"
               variant="solid"
               colorScheme={useGetTagColor(type?.type?.name)}

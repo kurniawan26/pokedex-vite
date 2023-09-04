@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import URL_IMAGE from "../utils/helpers/urlImage";
 
 export default function Favorite() {
-  const { favorites } = useSelector((state) => state);
+  const favorites = useSelector((state) => state.favorites);
 
   return (
     <main className="p-5 m-auto max-w-7xl">
