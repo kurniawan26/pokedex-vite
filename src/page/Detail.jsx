@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { IconButton, Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
 import { useQuery } from "@tanstack/react-query";
-import { AiOutlineHeart } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { fetchPokemonData } from "../utils/service/api";
 import { useParams } from "react-router";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
@@ -10,20 +11,31 @@ import { Progress } from "@chakra-ui/progress";
 
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
-import { saveFavoriteThunk } from "../redux/Favorite/action";
+import {
+  removeFavoriteThunk,
+  saveFavoriteThunk,
+} from "../redux/Favorite/action";
+import URL_IMAGE from "../utils/helpers/urlImage";
+import useGetTagColor from "../utils/hooks/useGetTagColor";
 
 export default function Detail() {
   const { pokemonId } = useParams();
   const dispatch = useDispatch();
 
-  const selector = useSelector((state) => state);
-
-  console.log(selector);
+  const { favorites } = useSelector((state) => state);
 
   const { data } = useQuery({
     queryKey: ["pokemon-detail", pokemonId],
     queryFn: () =>
       fetchPokemonData(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`),
+  });
+
+  const { data: dataSpecies } = useQuery({
+    queryKey: ["pokemon-species", pokemonId],
+    queryFn: () =>
+      fetchPokemonData(
+        `https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`
+      ),
   });
 
   const onNextPokemon = () => {
@@ -53,6 +65,8 @@ export default function Detail() {
     },
   };
 
+  const isFavorite = favorites?.find((favorite) => favorite.id === +pokemonId);
+
   return (
     <motion.div
       variants={variants}
@@ -63,30 +77,33 @@ export default function Detail() {
     >
       <div className="flex justify-between w-full">
         <h1 className="text-3xl font-bold capitalize">{data?.name}</h1>
-        <IconButton
-          aria-label="Favorite"
-          icon={
-            <AiOutlineHeart
-              size={24}
-              onClick={() =>
-                dispatch(
-                  saveFavoriteThunk({
-                    id: data?.id,
-                    name: data?.name,
-                    weight: data?.weight,
-                    height: data?.height,
-                    types: data?.types,
-                  })
-                )
-              }
-            />
-          }
-        />
+        {isFavorite ? (
+          <IconButton
+            icon={<AiFillHeart color="red" size={24} />}
+            aria-label="Favorite"
+            onClick={() => dispatch(removeFavoriteThunk(data))}
+          />
+        ) : (
+          <IconButton
+            aria-label="Favorite"
+            icon={
+              <AiOutlineHeart
+                size={24}
+                onClick={() =>
+                  dispatch(
+                    saveFavoriteThunk({
+                      ...data,
+                    })
+                  )
+                }
+              />
+            }
+          />
+        )}
       </div>
       <div className="flex gap-4 h-44 w-44">
         <Image
-          src={`
-        https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemonId}.png`}
+          src={URL_IMAGE(pokemonId)}
           alt="pokemon"
           className="w-full h-full"
         />
@@ -98,25 +115,7 @@ export default function Detail() {
               key={type.type.name}
               size="lg"
               variant="solid"
-              colorScheme={
-                type.type.name === "grass"
-                  ? "green"
-                  : type.type.name === "fire"
-                  ? "red"
-                  : type.type.name === "water"
-                  ? "blue"
-                  : type.type.name === "bug"
-                  ? "yellow"
-                  : type.type.name === "normal"
-                  ? "gray"
-                  : type.type.name === "poison"
-                  ? "purple"
-                  : type.type.name === "electric"
-                  ? "yellow"
-                  : type.type.name === "ground"
-                  ? "yellow"
-                  : "gray"
-              }
+              colorScheme={useGetTagColor(type?.type?.name)}
               className="capitalize"
             >
               {type.type.name}
@@ -129,10 +128,15 @@ export default function Detail() {
           <Tab>Info</Tab>
           <Tab>Stats</Tab>
         </TabList>
-
         <TabPanels>
           <TabPanel>
             <div className="flex flex-col gap-4">
+              <div className="flex gap-4">
+                <span className="text-sm font-bold">Description</span>
+                <span className="text-sm">
+                  {dataSpecies?.flavor_text_entries[0].flavor_text}
+                </span>
+              </div>
               <div className="flex gap-4">
                 <div className="flex flex-col">
                   <span className="text-sm font-bold">Weight</span>
