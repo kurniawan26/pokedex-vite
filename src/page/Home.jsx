@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useOnScrollFetch from "../utils/hooks/useOnScrollFetch";
 import { getDetailPokemon, getAllPokemon } from "../utils/service/api";
@@ -6,31 +6,57 @@ import Pokecard from "../components/Pokecard";
 import Loader from "../components/Loader/Loader";
 
 export default function Home() {
-  const [page, setPage] = useState(1);
-  const [initialData, setInitialData] = useState([]);
+  const [pokemon, setPokemon] = useState([]);
   const cardContainerRef = useRef(null);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["pokemon", page],
-    queryFn: () => getAllPokemon({ offset: 20 * (page - 1), limit: 20 }),
-    cacheTime: false,
-  });
+  const { data, isLoading, isFetching, fetchNextPage, hasNextPage } =
+    useInfiniteQuery({
+      queryKey: ["pokemon"],
+      queryFn: ({ pageParam }) =>
+        getAllPokemon({
+          limit: 20,
+          offset: pageParam,
+        }),
+      cacheTime: false,
+      getNextPageParam: (lastPage) => {
+        if (lastPage?.next) {
+          const offset = lastPage.next
+            .split("?")[1]
+            .split("&")
+            .find((param) => param.includes("offset"))
+            .split("=")[1];
+          return offset;
+        }
+        return undefined;
+      },
+    });
 
   const getEachData = useCallback(async () => {
-    if (data) {
-      const response = await Promise.all(
-        data.map((pokemon) => getDetailPokemon(pokemon?.url))
-      );
+    const response = data?.pages.map((page) =>
+      page?.results.map((pokemon) => pokemon)
+    );
 
-      setInitialData((prev) => [...prev, ...response]);
-    }
+    const payload = await Promise.all(
+      response?.flat().map(async (pokemon) => {
+        const response = await getDetailPokemon(pokemon.url);
+        return response;
+      })
+    );
+
+    setPokemon(payload);
   }, [data]);
 
   useEffect(() => {
     getEachData();
-  }, [getEachData, page]);
+  }, [getEachData]);
 
-  useOnScrollFetch(cardContainerRef, data, isLoading, setPage);
+  useOnScrollFetch(
+    cardContainerRef,
+    pokemon,
+    isFetching,
+    fetchNextPage,
+    hasNextPage
+  );
 
   return (
     <main className="p-5 m-auto max-w-7xl">
@@ -39,11 +65,11 @@ export default function Home() {
         className="grid gap-4 mt-5 sm:grid-cols-3 md:grid-cols-4"
         ref={cardContainerRef}
       >
-        {initialData?.map((pokemon) => (
+        {pokemon?.map((pokemon) => (
           <Pokecard pokemon={pokemon} key={pokemon.id} />
         ))}
       </div>
-      {isLoading && <Loader />}
+      {isLoading || isFetching ? <Loader /> : null}
     </main>
   );
 }

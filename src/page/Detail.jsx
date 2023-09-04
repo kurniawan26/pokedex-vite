@@ -81,7 +81,9 @@ export default function Detail() {
       className="flex flex-col items-center gap-4 p-4"
     >
       <div className="flex justify-between w-full">
-        <h1 className="text-3xl font-bold capitalize">{data?.name}</h1>
+        <h1 className="text-3xl font-bold capitalize">
+          {data?.name} #{data?.id}
+        </h1>
         {isFavorite ? (
           <IconButton
             icon={<AiFillHeart color="red" size={24} />}

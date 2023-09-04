@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import useGetTagColor from "../../utils/hooks/useGetTagColor";
 
 import PropTypes from "prop-types";
+import useGetPokeId from "../../utils/hooks/useGetPokeId";
 
 export default function Pokecard({ pokemon }) {
   const favorites = useSelector((state) => state.favorites);
@@ -22,6 +23,9 @@ export default function Pokecard({ pokemon }) {
 
   return (
     <div className="p-5 bg-white rounded-lg shadow-lg">
+      <h1 className="text-xl font-bold text-center capitalize">
+        {useGetPokeId(pokemon?.id)}
+      </h1>
       <Image
         src={URL_IMAGE(pokemon?.id)}
         alt={pokemon?.name}

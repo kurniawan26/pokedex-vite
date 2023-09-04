@@ -1,14 +1,13 @@
 import axios from "axios";
 
-async function getAllPokemon({ limit, offset }) {
+async function getAllPokemon({ limit = 20, offset = 0 }) {
   const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/`, {
     params: {
       limit,
       offset,
     },
   });
-
-  return response.data.results;
+  return response.data;
 }
 
 async function getDetailPokemon(pokemon) {
