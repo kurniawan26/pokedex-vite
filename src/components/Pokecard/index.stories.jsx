@@ -1,14 +1,21 @@
-import Pokecard from ".";
+import Pokecard from "./index";
 import "../../index.css";
+import { Provider } from "react-redux";
+import store from "../../redux";
+import { BrowserRouter } from "react-router-dom";
 
 export default {
   title: "Components/Pokecard",
   component: Pokecard,
   decorators: [
     (Story) => (
-      <div style={{ width: "800px" }}>
-        <Story />
-      </div>
+      <Provider store={store}>
+        <BrowserRouter>
+          <div style={{ width: "800px" }}>
+            <Story />
+          </div>
+        </BrowserRouter>
+      </Provider>
     ),
   ],
   parameters: {
@@ -22,7 +29,18 @@ export const Default = {
     pokemon: {
       name: "bulbasaur",
       id: 1,
-      types: ["grass", "poison"],
+      types: [
+        {
+          type: {
+            name: "grass",
+          },
+        },
+        {
+          type: {
+            name: "poison",
+          },
+        },
+      ],
       height: 7,
       weight: 69,
     },

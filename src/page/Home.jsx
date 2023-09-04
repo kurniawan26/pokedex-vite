@@ -1,12 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useOnScrollFetch from "../utils/hooks/useOnScrollFetch";
-import { Image } from "@chakra-ui/image";
-import { Link } from "react-router-dom";
 import { fetchPokemonData, getPokemon } from "../utils/service/api";
-import URL_IMAGE from "../utils/helpers/urlImage";
-import { IconButton, Spinner } from "@chakra-ui/react";
-import { AiOutlineHeart } from "react-icons/ai";
+import { Spinner } from "@chakra-ui/react";
 import Pokecard from "../components/Pokecard";
 
 export default function Home() {
@@ -38,8 +34,7 @@ export default function Home() {
 
   return (
     <main className="p-5 m-auto max-w-7xl">
-      <h1 className="text-3xl font-bold">Pokedex</h1>
-      <p className="text-lg">Hello, world!</p>
+      <h1 className="text-3xl font-bold">Home</h1>
       <div
         className="grid gap-4 mt-5 sm:grid-cols-3 md:grid-cols-4"
         ref={cardContainerRef}

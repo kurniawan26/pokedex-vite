@@ -7,7 +7,6 @@ import { fetchPokemonData } from "../utils/service/api";
 import { useParams } from "react-router";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { Tag } from "@chakra-ui/tag";
-import { Progress } from "@chakra-ui/progress";
 
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,6 +16,7 @@ import {
 } from "../redux/Favorite/action";
 import URL_IMAGE from "../utils/helpers/urlImage";
 import useGetTagColor from "../utils/hooks/useGetTagColor";
+import ProgressLabel from "../components/Progress/ProgressLabel";
 
 export default function Detail() {
   const { pokemonId } = useParams();
@@ -165,17 +165,7 @@ export default function Detail() {
             <span className="text-sm font-bold">Stats</span>
             <div className="flex flex-col gap-4 my-2">
               {data?.stats.map((stat) => (
-                <div className="flex flex-col gap-1" key={stat.stat.name}>
-                  <span className="text-sm capitalize">
-                    {stat.stat.name} ({stat.base_stat})
-                  </span>
-                  <Progress
-                    size="lg"
-                    value={stat.base_stat}
-                    colorScheme="green"
-                    rounded={10}
-                  />
-                </div>
+                <ProgressLabel stat={stat} key={stat.stat.name} />
               ))}
             </div>
           </TabPanel>

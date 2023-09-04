@@ -14,8 +14,6 @@ const useGetTagColor = (tag) => {
       return "purple";
     case "electric":
       return "yellow";
-    case "ground":
-      return "brown";
     default:
       return "gray";
   }
