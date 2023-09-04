@@ -3,7 +3,7 @@ import { IconButton, Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
 import { useQuery } from "@tanstack/react-query";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
-import { fetchPokemonData } from "../utils/service/api";
+import { getDetailPokemon } from "../utils/service/api";
 import { useParams } from "react-router";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { Tag } from "@chakra-ui/tag";
@@ -17,6 +17,7 @@ import {
 import URL_IMAGE from "../utils/helpers/urlImage";
 import useGetTagColor from "../utils/hooks/useGetTagColor";
 import ProgressLabel from "../components/Progress/ProgressLabel";
+import Loader from "../components/Loader/Loader";
 
 export default function Detail() {
   const { pokemonId } = useParams();
@@ -24,16 +25,16 @@ export default function Detail() {
 
   const { favorites } = useSelector((state) => state);
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["pokemon-detail", pokemonId],
     queryFn: () =>
-      fetchPokemonData(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`),
+      getDetailPokemon(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`),
   });
 
-  const { data: dataSpecies } = useQuery({
+  const { data: dataSpecies, isLoading: isLoadingSpecies } = useQuery({
     queryKey: ["pokemon-species", pokemonId],
     queryFn: () =>
-      fetchPokemonData(
+      getDetailPokemon(
         `https://pokeapi.co/api/v2/pokemon-species/${pokemonId}`
       ),
   });
@@ -67,6 +68,10 @@ export default function Detail() {
 
   const isFavorite = favorites?.find((favorite) => favorite.id === +pokemonId);
 
+  if (isLoading || isLoadingSpecies) {
+    return <Loader />;
+  }
+
   return (
     <motion.div
       variants={variants}
@@ -86,18 +91,8 @@ export default function Detail() {
         ) : (
           <IconButton
             aria-label="Favorite"
-            icon={
-              <AiOutlineHeart
-                size={24}
-                onClick={() =>
-                  dispatch(
-                    saveFavoriteThunk({
-                      ...data,
-                    })
-                  )
-                }
-              />
-            }
+            onClick={() => dispatch(saveFavoriteThunk(data))}
+            icon={<AiOutlineHeart size={24} />}
           />
         )}
       </div>

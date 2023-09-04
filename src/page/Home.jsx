@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useOnScrollFetch from "../utils/hooks/useOnScrollFetch";
-import { fetchPokemonData, getPokemon } from "../utils/service/api";
-import { Spinner } from "@chakra-ui/react";
+import { getDetailPokemon, getAllPokemon } from "../utils/service/api";
 import Pokecard from "../components/Pokecard";
+import Loader from "../components/Loader/Loader";
 
 export default function Home() {
   const [page, setPage] = useState(1);
@@ -12,14 +12,14 @@ export default function Home() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["pokemon", page],
-    queryFn: () => getPokemon({ offset: 20 * (page - 1), limit: 20 }),
+    queryFn: () => getAllPokemon({ offset: 20 * (page - 1), limit: 20 }),
     cacheTime: false,
   });
 
   const getEachData = useCallback(async () => {
     if (data) {
       const response = await Promise.all(
-        data.map((pokemon) => fetchPokemonData(pokemon?.url))
+        data.map((pokemon) => getDetailPokemon(pokemon?.url))
       );
 
       setInitialData((prev) => [...prev, ...response]);
@@ -43,17 +43,7 @@ export default function Home() {
           <Pokecard pokemon={pokemon} key={pokemon.id} />
         ))}
       </div>
-      {isLoading && (
-        <div className="flex justify-center mt-5">
-          <Spinner
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="blue.500"
-            size="xl"
-          />
-        </div>
-      )}
+      {isLoading && <Loader />}
     </main>
   );
 }

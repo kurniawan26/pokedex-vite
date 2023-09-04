@@ -62,23 +62,14 @@ export default function Pokecard({ pokemon }) {
           {isFavorite ? (
             <IconButton
               aria-label="Favorite"
-              icon={
-                <AiFillHeart
-                  color="red"
-                  size={24}
-                  onClick={() => dispatch(removeFavoriteThunk(pokemon))}
-                />
-              }
+              onClick={() => dispatch(removeFavoriteThunk(pokemon))}
+              icon={<AiFillHeart color="red" size={24} />}
             />
           ) : (
             <IconButton
               aria-label="Favorite"
-              icon={
-                <AiOutlineHeart
-                  size={24}
-                  onClick={() => dispatch(saveFavoriteThunk(pokemon))}
-                />
-              }
+              onClick={() => dispatch(saveFavoriteThunk(pokemon))}
+              icon={<AiOutlineHeart size={24} />}
             />
           )}
         </div>
